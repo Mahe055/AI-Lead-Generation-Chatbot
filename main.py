@@ -15,19 +15,6 @@ llm = ChatGoogleGenerativeAI(
     temperature=0.3
 )
 
-# Load document
-loader = TextLoader("knowledge.txt")
-documents = loader.load()
-
-# Split into chunks
-text_splitter = CharacterTextSplitter(
-    chunk_size=200,
-    chunk_overlap=20
-)
-
-docs = text_splitter.split_documents(documents)
-print("Loaded docs:", len(docs))
-
 # Load knowledge JSON
 with open("knowledge.json", "r") as f:
     knowledge = json.load(f)
@@ -46,39 +33,23 @@ user_data = {
 
 def detect_intent(user_input):
     user_input_lower = user_input.strip().lower()
-    print("DEBUG INPUT:", user_input_lower)
 
     if any(word in user_input_lower for word in ["hi", "hello", "hey"]):
-        print("MATCH: greeting")
         return "greeting"
 
     if any(word in user_input_lower for word in ["buy", "want", "purchase", "subscribe"]):
-        print("MATCH: high_intent")
         return "high_intent"
 
     if any(word in user_input_lower for word in ["price", "pricing", "cost", "plan"]):
-        print("MATCH: pricing")
         return "pricing"
 
-    print("FALLBACK TO LLM")
+    if any(word in user_input_lower for word in ["refund"]):
+        return "refund"
 
-    try:
-        response = llm.invoke(f"Classify intent: {user_input}")
-        print("LLM RESPONSE:", response.content)
-        intent = response.content.strip().lower()
+    if any(word in user_input_lower for word in ["support"]):
+        return "support"
 
-        if "greeting" in intent:
-            return "greeting"
-        elif "pricing" in intent:
-            return "pricing"
-        elif "high" in intent:
-            return "high_intent"
-        else:
-            return "unknown"
-
-    except Exception as e:
-        print("ERROR:", e)
-        return "unknown"
+    return "unknown"
 
 
 def chatbot():
@@ -94,10 +65,27 @@ def chatbot():
             print("Bot: Hi! You can ask about pricing or plans 😊")
 
         elif intent == "pricing":
-            with open("knowledge.txt", "r") as f:
-                data = f.read()
-            print("Bot: Here are our plans 👇")
-            print(data)
+            basic = knowledge["pricing"]["basic"]
+            pro = knowledge["pricing"]["pro"]
+
+            print("\nBot: Here are our plans 👇\n")
+
+            print("Basic Plan:")
+            print(f"- {basic['price']}")
+            print(f"- {basic['videos']}")
+            print(f"- {basic['quality']}\n")
+
+            print("Pro Plan:")
+            print(f"- {pro['price']}")
+            print(f"- {pro['videos']}")
+            print(f"- {pro['quality']}")
+            print(f"- {pro['extras']}")
+
+        elif intent == "refund":
+            print("Bot:", knowledge["policies"]["refund"])
+
+        elif intent == "support":
+            print("Bot:", knowledge["policies"]["support"])
 
         elif intent == "high_intent":
             print("Bot: Great! Let's get you signed up.")
@@ -109,7 +97,7 @@ def chatbot():
                 user_data["email"] = input("Bot: Your email? ")
 
             if not user_data["platform"]:
-                user_data["platform"] = input("Bot: Your platform (YouTube/Instagram)? ")
+                user_data["platform"] = input("Bot: Your platform (YouTube/Instagram/others)? ")
 
             mock_lead_capture(
                 user_data["name"],

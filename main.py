@@ -14,7 +14,6 @@ llm = ChatGoogleGenerativeAI(
     model="gemini-1.5-flash-latest",
     temperature=0.3
 )
-
 # Load knowledge JSON
 with open("knowledge.json", "r") as f:
     knowledge = json.load(f)
@@ -48,7 +47,11 @@ def detect_intent(user_input):
 
     if any(word in user_input_lower for word in ["support"]):
         return "support"
-
+    
+    if any(word in user_input_lower for word in ["ok", "okay", "fine", "cool", "alright", "sounds good", "great"
+]):
+        return "ack"
+    
     return "unknown"
 
 
@@ -83,6 +86,8 @@ def chatbot():
 
         elif intent == "refund":
             print("Bot:", knowledge["policies"]["refund"])
+        elif intent == "ack":
+            print("Bot: 👍 Let me know if you’d like to proceed or explore a plan.")
 
         elif intent == "support":
             print("Bot:", knowledge["policies"]["support"])

@@ -1,30 +1,52 @@
-Built an AI chatbot that converts user conversations into leads using intent detection and knowledge-based responses.# Social to Lead AI Agent
 
-# Overview
-This project is a simple AI-powered chatbot that converts user conversations into leads.
+#  AI Lead Generation Chatbot
 
-# Features
-- Intent detection (greeting, pricing, buying intent)
-- Knowledge-based responses using external files
-- Lead capture system (name, email, platform)
-- Fallback to LLM (Gemini API)
+This project is a simple chatbot built using Python and LangChain.
+It can answer user queries about pricing and collect basic details from users who show interest in buying a plan.
 
-# Tech Stack
-- Python
-- LangChain
-- Google Gemini API
-- JSON (for structured knowledge)
-- Text file (for document-based responses)
 
-# How it Works
-1. User enters a message
-2. Intent is detected using rule-based + LLM fallback
-3. Based on intent:
-   - Greeting → Friendly response
-   - Pricing → Reads from knowledge base
-   - High Intent → Collects user details
-4. Lead is captured and printed
+#  Features
 
-# Setup
+* Basic conversational chatbot (runs in terminal)
+* Intent detection using rules + LLM fallback
+* Answers pricing-related questions
+* Captures user details (name, email, platform)
+* Uses `.env` for API key security
 
-1. Install dependencies:
+
+#  Tech Stack
+
+* Python
+* LangChain
+* Google Gemini API
+* dotenv
+
+#  How it works
+
+* The chatbot first tries to detect intent using simple keyword rules
+* If that fails, it uses the LLM
+* Based on intent:
+
+  * greeting → responds normally
+  * pricing → shows plan details
+  * buying intent → collects user info
+
+
+#  Example
+
+You: hello
+Bot: Hi! You can ask about pricing or plans 😊
+
+You: pricing
+Bot: Basic Plan: $29/month...
+Bot: Pro Plan: $79/month...
+
+You: I want to buy
+Bot: What's your name?
+
+
+#  Author
+
+Mahesh
+
+

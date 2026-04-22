@@ -1,52 +1,48 @@
 
-#  AI Lead Generation Chatbot
 
-This project is a simple chatbot built using Python and LangChain.
-It can answer user queries about pricing and collect basic details from users who show interest in buying a plan.
+# How to Run Locally
 
+```bash
+# 1. Clone repo
+git clone https://github.com/your-username/Social-to-Lead-Agent.git
 
-#  Features
+# 2. Go to project folder
+cd Social-to-Lead-Agent
 
-* Basic conversational chatbot (runs in terminal)
-* Intent detection using rules + LLM fallback
-* Answers pricing-related questions
-* Captures user details (name, email, platform)
-* Uses `.env` for API key security
+# 3. Install dependencies
+pip install -r requirements.txt
 
+# 4. Add your API key in .env file
+GOOGLE_API_KEY=your_api_key_here
 
-#  Tech Stack
+# 5. Run the chatbot
+python main.py
+```
+# Architecture Explanation (~200 words)
 
-* Python
-* LangChain
-* Google Gemini API
-* dotenv
+This project implements a simple conversational agent that combines intent detection, structured knowledge retrieval, and lead capture.
 
-#  How it works
+LangChain is used for integrating the LLM (Google Gemini) and handling prompt-based intent classification fallback. Instead of using LangGraph or AutoGen, a lightweight procedural flow is used because the conversation logic is linear and does not require complex multi-agent coordination or graph-based state transitions.
 
-* The chatbot first tries to detect intent using simple keyword rules
-* If that fails, it uses the LLM
-* Based on intent:
+State is managed using a Python dictionary (`user_data`) which stores user intent and lead information such as name, email, and platform. This allows the chatbot to maintain context across multiple turns, especially during the lead capture phase.
 
-  * greeting → responds normally
-  * pricing → shows plan details
-  * buying intent → collects user info
+For knowledge retrieval, the system uses a local JSON file (`knowledge.json`) which contains structured data such as pricing plans and company policies. This approach ensures deterministic and accurate responses without relying entirely on the LLM. A simple keyword-based retrieval mechanism is used to simulate RAG behavior.
 
+The architecture prioritizes simplicity, clarity, and reliability, making it suitable for small-scale automation tasks like lead generation and customer interaction.
 
-#  Example
+# WhatsApp Deployment (Webhook Integration)
 
-You: hello
-Bot: Hi! You can ask about pricing or plans 😊
+To integrate this chatbot with WhatsApp, we can use the WhatsApp Business API (via providers like Meta or Twilio).
 
-You: pricing
-Bot: Basic Plan: $29/month...
-Bot: Pro Plan: $79/month...
+The flow would work as follows:
 
-You: I want to buy
-Bot: What's your name?
+1. A user sends a message on WhatsApp.
+2. WhatsApp forwards this message to a backend server via a webhook (HTTP POST request).
+3. The backend receives the message and passes it to the chatbot logic (`chatbot()` function).
+4. The chatbot processes the input (intent detection, retrieval, or lead capture).
+5. The generated response is sent back to WhatsApp using the API.
+6. The user receives the reply instantly in the chat.
 
-
-#  Author
-
-Mahesh
+The webhook acts as the bridge between WhatsApp and the chatbot system. For production use, the chatbot logic would be wrapped inside a web framework like Flask or FastAPI, and deployed on a server to handle incoming requests in real-time.
 
 
